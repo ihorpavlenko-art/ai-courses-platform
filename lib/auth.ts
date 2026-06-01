@@ -17,27 +17,33 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const email = credentials.email.trim().toLowerCase();
-        const name = credentials.name?.trim() || email.split("@")[0];
+        try {
+          const email = credentials.email.trim().toLowerCase();
+          const name = credentials.name?.trim() || email.split("@")[0];
 
-        // Upsert user by email — creates account on first login, returns existing on subsequent
-        const user = await prisma.user.upsert({
-          where: { email },
-          update: { lastLoginAt: new Date() },
-          create: {
-            googleId: `local_${email}`,
-            name,
-            email,
-            avatarUrl: null,
-          },
-        });
+          // Upsert user by email — creates account on first login, returns existing on subsequent
+          const user = await prisma.user.upsert({
+            where: { email },
+            update: { lastLoginAt: new Date() },
+            create: {
+              googleId: `local_${email}`,
+              name,
+              email,
+              avatarUrl: null,
+              lastLoginAt: new Date(),
+            },
+          });
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.avatarUrl,
-        };
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.avatarUrl,
+          };
+        } catch (error) {
+          console.error("[Auth] Credentials authorize error:", error);
+          return null;
+        }
       },
     }),
     // Google OAuth (requires GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET)

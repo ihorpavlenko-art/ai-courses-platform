@@ -11,7 +11,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@libsql/client": "^0.8.1",
+    "@prisma/adapter-libsql": "^7.1.0",
     "@prisma/client": "^7.8.0",
     "@tanstack/react-query": "^5.100.14",
     "next": "16.2.6",
